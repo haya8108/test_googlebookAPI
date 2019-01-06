@@ -12,9 +12,7 @@ import UIKit
 class BookSearchTableVC: UITableViewController, UISearchBarDelegate {
     
     var resultBooks = [Items]()
-    
-    let dmmyArray = ["book1","book2","book3","book4"]
-    let cellId = "cellId"
+   let cellId = "cellId"
     
     
     lazy var searchBar: UISearchBar = {
@@ -27,18 +25,7 @@ class BookSearchTableVC: UITableViewController, UISearchBarDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("load BookSearchVC")
-        NameToIsbn(searchKey: "Swift") { (result) in
-            self.resultBooks = result
-            
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-            
-        }
 
-        navigationItem.title = "Book Search"
-        
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellId)
         
         if let navBar = navigationController?.navigationBar {
@@ -73,9 +60,7 @@ class BookSearchTableVC: UITableViewController, UISearchBarDelegate {
         cell.textLabel?.text = book?.title ?? ""
         cell.detailTextLabel?.text = book?.authors?[0] ?? ""
         
-        
-        
-        if let thumbnail = book?.imageLinks!["smallThumbnail"],
+        if let thumbnail = book?.imageLinks!["thumbnail"],
             let url = URL(string: thumbnail.replacingOccurrences(of: "http://", with: "https://")),
             let imageData = try? Data(contentsOf: url),
             let image = UIImage(data: imageData) {
@@ -92,15 +77,22 @@ class BookSearchTableVC: UITableViewController, UISearchBarDelegate {
         bookDetailController.book = book
         searchBar.isHidden = true
         navigationController?.pushViewController(bookDetailController, animated: true)
-        
     }
+ 
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
         searchBar.resignFirstResponder()
-      //  NameToIsbn(searchKey: searchBar.text!,completion: nil)
+  
+        guard let key = searchBar.text else { return }
+        NameToIsbn(searchKey: key) { (result) in
+            self.resultBooks = result
+            
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
     }
-    
     
     
     
@@ -134,9 +126,5 @@ class BookSearchTableVC: UITableViewController, UISearchBarDelegate {
         }
         task.resume()
     }
-    
-    
-    
-    
     
 }

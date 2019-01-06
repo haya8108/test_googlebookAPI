@@ -14,15 +14,6 @@ enum SerializationError: Error {
 
 struct Library {
     let formal: String?
-//    let post: String
-//    let address: String
-//    let tel: String
-//    let url: String
-//
-//    let pref: String
-//    let city: String
-//
-//    let libid: String
 
 
     init(json: [String : Any]) throws {

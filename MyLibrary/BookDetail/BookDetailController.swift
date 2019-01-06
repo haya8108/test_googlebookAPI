@@ -12,47 +12,37 @@ import UIKit
 class BookDetailController: UITableViewController {
     
     var book: VolumeInfo?
-    let header = "header"
+    let cellId = "cellId"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        if let isbns = book?.industryIdentifiers {
-//
-//            for isbn in isbns {
-//                if isbn["type"] == "ISBN_10" {
-//                    print(isbn["identifier"])
-//                } else if isbn["type"] == "ISBN_13" {
-//
-//                } else { }
-//
-//            }
-//            [["type": "ISBN_10", "identifier": "4873113911"], ["type": "ISBN_13", "identifier": "9784873113913"]]
-
-     //   } else { print("isbn erro") }
-        
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: header)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellId)
         
     }
     
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let view = UIView()
-        view.backgroundColor = .black
-        return view
-    }
     
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 200
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 300
     }
- 
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return 1
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: header, for: indexPath)
-        cell.backgroundColor = .gray
+ 
+        let cell = UITableViewCell(style: .subtitle , reuseIdentifier: cellId)
+        cell.textLabel?.text = book?.title ?? ""
+        cell.detailTextLabel?.text = book?.authors?.joined(separator: " ") ?? ""
+        
+        if let thumbnail = book?.imageLinks!["thumbnail"],
+            let url = URL(string: thumbnail.replacingOccurrences(of: "http://", with: "https://")),
+            let imageData = try? Data(contentsOf: url),
+            let image = UIImage(data: imageData) {
+            cell.imageView?.image = image
+        }
+        
         return cell
     }
     
